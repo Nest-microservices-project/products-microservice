@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   BadRequestException,
+  HttpStatus,
   Injectable,
   Logger,
   NotFoundException,
@@ -11,6 +12,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaClient } from '@prisma/client';
 import { PaginationDTO } from 'src/common';
 import { isObjectEmpty } from 'src/utils';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class ProductsService extends PrismaClient implements OnModuleInit {
@@ -51,7 +53,10 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     });
     if (!product) {
       this.logger.error(`Product with this Id ${id} not found.`);
-      throw new NotFoundException(`Product with this Id ${id} not found.`);
+      throw new RpcException({
+        message: `Product with this Id ${id} not found.`,
+        status: HttpStatus.BAD_REQUEST,
+      });
     }
 
     return product;
@@ -61,14 +66,21 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     const { id: __, ...data } = updateProductDto;
     if (isObjectEmpty(updateProductDto)) {
       this.logger.error(`You should send some data in body.`);
-      throw new BadRequestException(`You should send some data in body.`);
+      throw new RpcException({
+        message: `You should send some data in body.`,
+        status: HttpStatus.BAD_REQUEST,
+      });
     }
 
     try {
       await this.findOne(id);
     } catch (e) {
       this.logger.error(`Product with this Id ${id} not found.`);
-      throw new NotFoundException(`Product with this Id ${id} not found.`);
+
+      throw new RpcException({
+        message: `You should send some data in body.`,
+        status: HttpStatus.NOT_FOUND,
+      });
     }
 
     return this.product.update({

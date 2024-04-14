@@ -5,7 +5,7 @@ import { Controller, ParseIntPipe } from '@nestjs/common';
 import { PaginationDTO } from 'src/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
-@Controller('productos')
+@Controller('products')
 export class ProductosController {
   constructor(private readonly productsService: ProductsService) {}
 
