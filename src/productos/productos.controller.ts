@@ -1,7 +1,7 @@
 import { ProductsService } from './productos.service';
 import { CreateProductDto } from './dto/create-producto.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Controller, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, ParseIntPipe } from '@nestjs/common';
 import { PaginationDTO } from 'src/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
@@ -20,7 +20,7 @@ export class ProductosController {
   }
 
   @MessagePattern({ cmd: 'find_one_product' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Payload('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(id);
   }
 
